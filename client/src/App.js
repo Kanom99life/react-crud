@@ -8,55 +8,39 @@ function App() {
   const [country, setCountry] = useState("");
   const [position, setPosition] = useState("");
   const [wage, setWage] = useState(0);
+
   const [employeeList, setEmployeeList] = useState([]);
   const [showEmployees, setShowEmployees] = useState(false);
-  const [dataFetched, setDataFetched] = useState(false);  // Track if data is already fetched
-
+  const [dataFetched, setDataFetched] = useState(false); 
 
   const getEmployees = async () => {
-    if (dataFetched) {
-      // If the data has already been fetched, skip the fetch
-      setShowEmployees((prevState) => !prevState);  // Toggle visibility
-      return;
+    if (!dataFetched) {
+      // Fetch data only if it hasn't been fetched before
+      try {
+        const response = await axios.get("http://localhost:3001/employees");
+        setEmployeeList(response.data); 
+        setDataFetched(true); // Mark the data as fetched so that we don't fetch it again
+      } catch (error) {
+        console.error("Error fetching employees:", error); 
+      }
     }
-  
-    try {
-      const response = await axios.get("http://localhost:3001/employees");
-      setEmployeeList(response.data);  // Set the data
-      setDataFetched(true);  // Mark the data as fetched
-      setShowEmployees((prevState) => !prevState);  // Toggle visibility
-    } catch (error) {
-      console.error("Error fetching employees:", error);
-    }
+    setShowEmployees((prevState) => !prevState); 
   };
 
-  const addEmployee = (event) => {
-    event.preventDefault(); // Prevent the page from refreshing
+  const addEmployee = async (event) => {
+    event.preventDefault(); // Prevent the default form submission to avoid page reload
     try {
-      axios
-        .post("http://localhost:3001/create", {
-          name: name,
-          age: age,
-          country: country,
-          position: position,
-          wage: wage,
-        })
-        .then(() => {
-          setEmployeeList([
-            ...employeeList,
-            {
-              name: name,
-              age: age,
-              country: country,
-              position: position,
-              wage: wage,
-            },
-          ]);
-          // Clear the form by resetting state values
-          resetForm();
-        });
+      await axios.post("http://localhost:3001/create", {
+        name, age, country, position, wage
+      });
+      // Update the employee list with the new employee
+      setEmployeeList((prevList) => [
+        ...prevList,
+        { name, age, country, position, wage }
+      ]);
+      resetForm(); 
     } catch (error) {
-      console.error("There was an error adding the employee!", error);
+      console.error("Error adding employee:", error);
     }
   };
 
