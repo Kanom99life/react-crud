@@ -1,0 +1,11 @@
+-- USE employee_db;
+
+CREATE TABLE employees (
+    id INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    age INT(10) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    position VARCHAR(100) NOT NULL,
+    wage INT(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
