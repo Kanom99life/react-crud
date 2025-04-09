@@ -8,7 +8,8 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: "localhost",
+  host: "mysql", // use service in docker-compose
+  // host: "localhost", // use localhost if not using docker
   user: "user",
   password: "password",
   database: "employee_db",
